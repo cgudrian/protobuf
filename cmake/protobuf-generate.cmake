@@ -108,6 +108,11 @@ function(protobuf_generate)
     foreach(DIR ${_protobuf_include_path})
       if(NOT DIR STREQUAL "-I")
         file(RELATIVE_PATH _rel_dir ${DIR} ${_abs_dir})
+        if(_rel_dir STREQUAL _abs_dir)
+          # On Windows if DIR and _abs_dir reside on different drives
+          # _rel_dir returns _abs_dir which later breaks path composition.
+          continue()
+        endif()
         string(FIND "${_rel_dir}" "../" _is_in_parent_folder)
         if (NOT ${_is_in_parent_folder} EQUAL 0)
           set(_suitable_include_found TRUE)
